@@ -33,14 +33,14 @@
             :key="item.id"
           >
             <template slot="title">
-              <!-- <i :class="iconsObj[item.id]"></i> -->
+              <i :class="iconsObj[item.id]"></i>
               <span>{{ item.authName }}</span>
             </template>
             <el-menu-item
               :index="'/' + subItem.path + ''"
               v-for="subItem in item.children"
               :key="subItem.id"
-              @click="getActiveMenu('/' + subItem.path + '')"
+              @click="getActiveMenu(subItem.id, '/' + subItem.path + '')"
             >
               <template slot="title">
                 <i class="el-icon-menu"></i>
@@ -52,6 +52,7 @@
       >
       <!-- 右侧主体区域 -->
       <el-main>
+        <breadcrumb :breadcrumbList="breadcrumbList"></breadcrumb>
         <router-view></router-view>
       </el-main>
     </el-container>
@@ -60,29 +61,34 @@
 
 <script>
 import { menusListApi } from '@/api/layout'
+import { treeFindPath } from '@/utils'
+import breadcrumb from '@/components/breadcrumb.vue'
 export default {
   name: 'Home',
+  components: { breadcrumb },
   data () {
     return {
       // 左侧菜单数据
       menuList: null,
       // 左侧一级菜单图标数组：键=菜单id，值=图标名称
-      // iconsObj: {
-      //   '125': 'iconfont icon-user',
-      //   '103': 'iconfont icon-tijikongjian',
-      //   '101': 'iconfont icon-shangpin',
-      //   '102': 'iconfont icon-danju',
-      //   '145': 'iconfont icon-baobiao'
-      // },
+      iconsObj: {
+        125: 'el-icon-user-solid',
+        103: 'el-icon-s-platform',
+        101: 'el-icon-s-goods',
+        102: 'el-icon-s-order',
+        145: 'el-icon-s-data'
+      },
       // 是否折叠左侧菜单
       isCollapse: false,
       // 当前激活的menu菜单项
-      activeMenu: ''
+      activeMenu: '',
+      // 面包屑
+      breadcrumbList: []
     }
   },
   created () {
     this.getMenuList()
-    // this.activeMenu = window.sessionStorage.getItem('activeMenu')
+    this.activeMenu = window.sessionStorage.getItem('activeMenu')
   },
   methods: {
     logout () {
@@ -95,14 +101,22 @@ export default {
       const { data: res } = await menusListApi()
       if (res.meta.status !== 200) return this.$message.error(res.mate.msg)
       this.menuList = res.data
+      this.$message.success('菜单获取成功')
     },
     // 点击折叠按钮触发
     toggleCollapse () {
       this.isCollapse = !this.isCollapse
     },
-    getActiveMenu (activeMenu) {
+    getActiveMenu (id, activeMenu) {
       window.sessionStorage.setItem('activeMenu', activeMenu)
       this.activeMenu = activeMenu
+      let data = treeFindPath(
+        this.menuList,
+        (data) => data.id === id,
+        'authName'
+      )
+      this.breadcrumbList = data
+      console.log('data', data)
     }
   }
 }
