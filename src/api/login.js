@@ -1,26 +1,25 @@
 import request from '@/utils/request.js'
 import qs from 'qs'
 
-const baseUrl = '/api/jwt/auth'
-
 // 登录
-export function authCodeLogin (params) {
+export function loginApi (data) {
   return request({
-    url: baseUrl + '/authCodeLogin/' + params.code,
-    method: 'get'
+    url: '/login',
+    method: 'post',
+    data
   })
 }
 // 退出
-export function authLogout (params) {
+export function logoutApi (params) {
   return request({
-    url: baseUrl + '/logout',
+    url: '/logout',
     method: 'get'
   })
 }
 // 获取用户数据
-export function getUserInfo (params) {
+export function userInfoApi (params) {
   return request({
-    url: baseUrl + '/getUserInfo',
+    url: '/getUserInfo',
     method: 'get',
     params: qs.stringfy(params)
   })

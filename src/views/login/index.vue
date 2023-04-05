@@ -7,7 +7,13 @@
         <img src="@/assets/logo.png" alt="头像logo" />
       </div>
       <!-- 登录表单区域 -->
-      <el-form :model="loginForm" :rules="rules" ref="loginFormRef" label-width="0px" class="login_form">
+      <el-form
+        :model="loginForm"
+        :rules="rules"
+        ref="loginFormRef"
+        label-width="0px"
+        class="login_form"
+      >
         <!-- 用户名 -->
         <el-form-item prop="username">
           <el-input
@@ -28,7 +34,9 @@
         <!-- 按钮区域 -->
         <el-form-item class="btns">
           <el-button type="primary" @click="login">登录</el-button>
-          <el-button type="info" @click="resetLoginForm('loginForm')">重置</el-button>
+          <el-button type="info" @click="resetLoginForm('loginForm')"
+            >重置</el-button
+          >
         </el-form-item>
       </el-form>
     </div>
@@ -36,6 +44,7 @@
 </template>
 
 <script>
+import { loginApi } from '@/api/login'
 export default {
   name: 'login',
   data () {
@@ -50,12 +59,22 @@ export default {
         // 验证用户名是否合法
         username: [
           { required: true, message: '请输入登录账号', trigger: 'blur' },
-          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+          {
+            min: 3,
+            max: 10,
+            message: '长度在 3 到 10 个字符',
+            trigger: 'blur'
+          }
         ],
         // 验证密码是否合法
         password: [
           { required: true, message: '请输入登录密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+          {
+            min: 6,
+            max: 15,
+            message: '长度在 6 到 15 个字符',
+            trigger: 'blur'
+          }
         ]
       }
     }
@@ -68,9 +87,9 @@ export default {
     },
     login () {
       // 表单之前的预验证
-      this.$refs.loginFormRef.validate(async valid => {
+      this.$refs.loginFormRef.validate(async (valid) => {
         if (!valid) return
-        const { data: res } = await this.$http.post('login', this.loginForm)
+        const { data: res } = await loginApi(this.loginForm)
         if (res.meta.status !== 200) return this.$message.error('登录失败! ')
         this.$message.success('登录成功')
         // 1. 将登陆成功之后拿到后端返回的token值，保存到客服端也就是临时浏览器sessionStorage中
@@ -88,7 +107,7 @@ export default {
 
 <style lang="less" scoped>
 .login_container {
-  background:#2b4b6b;
+  background: #2b4b6b;
   height: 100%;
 }
 .login_box {

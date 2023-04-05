@@ -6,23 +6,29 @@ import { Message } from 'element-ui'
 // 1. 创建新的axios实例，
 const service = axios.create({
   // 公共接口--这里注意后面会讲
-  baseURL: process.env.BASE_API,
+  baseURL: process.env.VUE_APP_BASE_API,
   // 超时时间 单位是ms，这里设置了3s的超时时间
   timeout: 3 * 1000
 })
 // 2.请求拦截器
 service.interceptors.request.use(config => {
+  if (config.method === 'get') {
+    config.data = { unused: 0 } // 这个是关键点，加入这行就可以了,解决get,请求添加不上Content-Type
+  }
   // 发请求前做的一些处理，数据转化，配置请求头，设置token,设置loading等，根据需求去添加
   config.data = JSON.stringify(config.data) // 数据转化,也可以使用qs转换
   config.headers = {
     'Content-Type': 'application/json' // 配置请求头
   }
+  // 为请求头对象添加token验证的Authorization字段
+  config.headers.Authorization = window.sessionStorage.getItem('token')
   // 如有需要：注意使用token的时候需要引入cookie方法或者用本地localStorage等方法，推荐js-cookie
   // const token = getCookie('名称');//这里取token之前，你肯定需要先拿到token,存一下
   // if(token){
   // config.params = {'token':token} //如果要求携带在参数中
   // config.headers.token= token; //如果要求携带在请求头中
   // }
+  console.log('token', config)
   return config
 }, error => {
   Promise.reject(error)
@@ -50,7 +56,7 @@ service.interceptors.response.use(response => {
         break
       case 404:
         error.message = '请求错误,未找到该资源'
-        window.location.href = '/NotFound'
+        // window.location.href = '/NotFound'
         break
       case 405:
         error.message = '请求方法未允许'
