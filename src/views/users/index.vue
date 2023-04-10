@@ -3,8 +3,17 @@
     <el-card>
       <el-row :gutter="20">
         <el-col :span="8">
-          <el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getUserList">
-            <el-button slot="append" icon="el-icon-search" @click="getUserList"></el-button>
+          <el-input
+            placeholder="请输入内容"
+            v-model="queryInfo.query"
+            clearable
+            @clear="getUserList"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              @click="getUserList"
+            ></el-button>
           </el-input>
         </el-col>
         <el-col :span="3">
@@ -20,7 +29,10 @@
         <el-table-column prop="role_name" label="角色"></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <el-switch v-model="scope.row.mg_state" @change="userStateChanged(scope.row)"></el-switch>
+            <el-switch
+              v-model="scope.row.mg_state"
+              @change="userStateChanged(scope.row)"
+            ></el-switch>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -37,7 +49,12 @@
               size="mini"
               @click="delOpen(scope.row.id)"
             ></el-button>
-            <el-button type="danger" icon="el-icon-setting" size="mini" @click="setRole(scope.row)"></el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-setting"
+              size="mini"
+              @click="setRole(scope.row)"
+            ></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -57,9 +74,19 @@
     </el-card>
 
     <!-- 添加用户弹框 -->
-    <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="30%" @close="addDialogClosed">
+    <el-dialog
+      title="添加用户"
+      :visible.sync="addDialogVisible"
+      width="30%"
+      @close="addDialogClosed"
+    >
       <!-- 主体内容 -->
-      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
+      <el-form
+        :model="addForm"
+        :rules="addFormRules"
+        ref="addFormRef"
+        label-width="70px"
+      >
         <el-form-item label="名称" prop="username">
           <el-input v-model="addForm.username"></el-input>
         </el-form-item>
@@ -80,9 +107,19 @@
     </el-dialog>
 
     <!-- 修改用户弹框 -->
-    <el-dialog title="修改用户" :visible.sync="editDialogVisible" width="30%" @close="editDialogClosed">
+    <el-dialog
+      title="修改用户"
+      :visible.sync="editDialogVisible"
+      width="30%"
+      @close="editDialogClosed"
+    >
       <!-- 主体内容 -->
-      <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="70px">
+      <el-form
+        :model="editForm"
+        :rules="editFormRules"
+        ref="editFormRef"
+        label-width="70px"
+      >
         <el-form-item label="名称" prop="username">
           <el-input v-model="editForm.username" disabled></el-input>
         </el-form-item>
@@ -99,10 +136,15 @@
       </span>
     </el-dialog>
 
-    <el-dialog title="分配角色" :visible.sync="setRoleVisible" width="30%" @close="setRoleDialogClosed">
+    <el-dialog
+      title="分配角色"
+      :visible.sync="setRoleVisible"
+      width="30%"
+      @close="setRoleDialogClosed"
+    >
       <div>
-        <p>当前用户：{{usersInfo.username}}</p>
-        <p>当前角色：{{usersInfo.role_name}}</p>
+        <p>当前用户：{{ usersInfo.username }}</p>
+        <p>当前角色：{{ usersInfo.role_name }}</p>
         <p>
           分配新角色：
           <el-select v-model="selectRoleId" placeholder="请选择">
@@ -127,8 +169,13 @@
 import {
   usersListApi,
   updateUserStateApi,
-  addUserInfoApi
+  addUserInfoApi,
+  userInfoDetailApi,
+  userInfoUpdateApi,
+  userInfoDeleteApi
 } from '@/api/user'
+import { RolesListApi, userInfoSetRole } from '@/api/roles'
+
 export default {
   data () {
     var validateEmail = (rule, value, callback) => {
@@ -168,11 +215,21 @@ export default {
       addFormRules: {
         username: [
           { required: true, message: '请输入名称', trigger: 'blur' },
-          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+          {
+            min: 3,
+            max: 10,
+            message: '长度在 3 到 10 个字符',
+            trigger: 'blur'
+          }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+          {
+            min: 6,
+            max: 15,
+            message: '长度在 6 到 15 个字符',
+            trigger: 'blur'
+          }
         ],
         email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
@@ -265,7 +322,7 @@ export default {
     // 点击确定时添加用户弹框
     addUser () {
       // 首先获取添加用户输入框对象，获取验证是否通过
-      this.$refs.addFormRef.validate(async valide => {
+      this.$refs.addFormRef.validate(async (valide) => {
         if (!valide) return this.$message.error('请填写完整用户信息')
         // 发送请求完成添加用户的操作
         // const { data: res } = await this.$http.post('users', this.addForm)
@@ -284,7 +341,8 @@ export default {
     },
     // 根据用户id查询用户信息，用作修改弹框
     async showEditDialog (id) {
-      const { data: res } = await this.$http.get('users/' + id)
+      // const { data: res } = await this.$http.get('users/' + id)
+      const { data: res } = await userInfoDetailApi(id)
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }
@@ -300,11 +358,15 @@ export default {
     // 修改用户信息
     eidtUser () {
       // 首先验证表单合法
-      this.$refs.editFormRef.validate(async valide => {
+      this.$refs.editFormRef.validate(async (valide) => {
         if (!valide) {
           this.$message.error('请填写完整用户信息')
         }
-        const { data: res } = await this.$http.put('users/' + this.editForm.id, this.editForm)
+        // const { data: res } = await this.$http.put(
+        //   'users/' + this.editForm.id,
+        //   this.editForm
+        // )
+        const { data: res } = await userInfoUpdateApi(this.editForm)
         console.log(res)
         if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
         this.$message.success(res.meta.msg)
@@ -316,16 +378,21 @@ export default {
     },
     async delOpen (id) {
       // 确认时，接收的confirmResult为confirm ,取消时 confirmResult为cancel
-      const confirmResult = await this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).catch(err => err)
+      const confirmResult = await this.$confirm(
+        '此操作将永久删除该用户, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).catch((err) => err)
 
       // 点击取消删除
       if (confirmResult !== 'confirm') return this.$message.info('已取消删除')
       // 确认删除
-      const { data: res } = await this.$http.delete('users/' + id)
+      // const { data: res } = await this.$http.delete('users/' + id)
+      const { data: res } = await userInfoDeleteApi(id)
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }
@@ -338,7 +405,8 @@ export default {
       // 获取用户信息
       this.usersInfo = usersInfo
       // 获取所有角色列表
-      const { data: res } = await this.$http.get('roles')
+      // const { data: res } = await this.$http.get('roles')
+      const { data: res } = await RolesListApi()
       if (res.meta.status !== 200) {
         return this.$message.error('获取角色列表失败！')
       }
@@ -353,7 +421,15 @@ export default {
       }
 
       // 保存数据到数据库
-      const { data: res } = await this.$http.put(`users/${this.usersInfo.id}/role`, { rid: this.selectRoleId })
+      // const { data: res } = await this.$http.put(
+      //   `users/${this.usersInfo.id}/role`,
+      //   { rid: this.selectRoleId }
+      // )
+      let data = {
+        id: this.usersInfo.id,
+        rid: this.selectRoleId
+      }
+      const { data: res } = await userInfoSetRole(data)
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }

@@ -25,3 +25,28 @@ export function addUserInfoApi (data) {
     data
   })
 }
+
+// 获取用户详情(编辑)
+export function userInfoDetailApi (id) {
+  return request({
+    url: `users/${id}`,
+    method: 'get'
+  })
+}
+
+// 编辑用户提交
+export function userInfoUpdateApi (data) {
+  return request({
+    url: `users/${data.id}`,
+    method: 'put',
+    data
+  })
+}
+
+// 单个用户删除
+export function userInfoDeleteApi (id) {
+  return request({
+    url: `users/${id}`,
+    method: 'delete'
+  })
+}
