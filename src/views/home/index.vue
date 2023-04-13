@@ -89,6 +89,7 @@ export default {
   created () {
     this.getMenuList()
     this.activeMenu = window.sessionStorage.getItem('activeMenu')
+    this.breadcrumbList = JSON.parse(sessionStorage.getItem('breadcrumbList'))
   },
   methods: {
     logout () {
@@ -116,7 +117,7 @@ export default {
         'authName'
       )
       this.breadcrumbList = data
-      console.log('data', data)
+      window.sessionStorage.setItem('breadcrumbList', JSON.stringify(this.breadcrumbList))
     }
   }
 }

@@ -174,7 +174,7 @@ import {
   userInfoUpdateApi,
   userInfoDeleteApi
 } from '@/api/user'
-import { RolesListApi, userInfoSetRole } from '@/api/roles'
+import { rolesListApi, userInfoSetRole } from '@/api/roles'
 
 export default {
   data () {
@@ -406,7 +406,7 @@ export default {
       this.usersInfo = usersInfo
       // 获取所有角色列表
       // const { data: res } = await this.$http.get('roles')
-      const { data: res } = await RolesListApi()
+      const { data: res } = await rolesListApi()
       if (res.meta.status !== 200) {
         return this.$message.error('获取角色列表失败！')
       }
