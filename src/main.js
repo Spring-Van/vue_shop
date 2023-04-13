@@ -4,7 +4,9 @@ import router from './router'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/css/global.css' // 导入全局样式表
 import './plugins/element.js' // 按需引入elementui
+import TreeTable from 'vue-table-with-tree-grid'
 
+Vue.component('treeTable', TreeTable)
 Vue.config.productionTip = false
 
 new Vue({

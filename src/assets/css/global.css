@@ -52,3 +52,10 @@ body,
 .ql-container{
     min-height: 300px;
 }
+
+
+.el-scrollbar__wrap{
+    overflow-x: hidden !important;
+    height: 400px !important;
+  }
+  
