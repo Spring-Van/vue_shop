@@ -1,7 +1,13 @@
 <template>
   <div>
     <el-card>
-      <el-alert title="注意：只允许为第三级分类设置相关参数" center type="warning" :closable="false" show-icon></el-alert>
+      <el-alert
+        title="注意：只允许为第三级分类设置相关参数"
+        center
+        type="warning"
+        :closable="false"
+        show-icon
+      ></el-alert>
       <el-row class="cat_opt">
         <span>选择商品分类:</span>
         <el-cascader
@@ -22,14 +28,20 @@
               size="mini"
               :disabled="isBtnDisable"
               @click="addDialogVisible = true"
-            >添加参数</el-button>
+              >添加参数</el-button
+            >
             <!-- 动态参数表格 -->
             <el-table :data="manyTableData" border>
               <!-- 扩展列 -->
               <el-table-column type="expand">
                 <template slot-scope="scope">
-                  <el-tag v-for="(item, i) in scope.row.attr_vals" :key="i" closable
-                  @close="handleClose(i,scope.row)">{{item}}</el-tag>
+                  <el-tag
+                    v-for="(item, i) in scope.row.attr_vals"
+                    :key="i"
+                    closable
+                    @close="handleClose(i, scope.row)"
+                    >{{ item }}</el-tag
+                  >
                   <el-input
                     class="input-new-tag"
                     v-if="scope.row.inputVisible"
@@ -37,15 +49,24 @@
                     ref="saveTagInput"
                     size="small"
                     @keyup.enter.native="handleInputConfirm(scope.row)"
-                    @blur="handleInputConfirm(scope.row)">
+                    @blur="handleInputConfirm(scope.row)"
+                  >
                   </el-input>
-                  <el-button v-else class="button-new-tag" size="small"
-                  @click="showInput(scope.row)">+ New Tag</el-button>
+                  <el-button
+                    v-else
+                    class="button-new-tag"
+                    size="small"
+                    @click="showInput(scope.row)"
+                    >+ New Tag</el-button
+                  >
                 </template>
               </el-table-column>
               <!-- 索引列 -->
               <el-table-column type="index"></el-table-column>
-              <el-table-column label="参数名称" prop="attr_name"></el-table-column>
+              <el-table-column
+                label="参数名称"
+                prop="attr_name"
+              ></el-table-column>
               <el-table-column label="操作">
                 <template slot-scope="scope">
                   <el-button
@@ -53,13 +74,15 @@
                     size="mini"
                     icon="el-icon-edit"
                     @click="showEditDialog(scope.row.attr_id)"
-                  >编辑</el-button>
+                    >编辑</el-button
+                  >
                   <el-button
                     type="danger"
                     size="mini"
                     icon="el-icon-delete"
                     @click="removeParams(scope.row.attr_id)"
-                  >删除</el-button>
+                    >删除</el-button
+                  >
                 </template>
               </el-table-column>
             </el-table>
@@ -70,15 +93,21 @@
               size="mini"
               :disabled="isBtnDisable"
               @click="addDialogVisible = true"
-            >添加属性</el-button>
+              >添加属性</el-button
+            >
 
             <!-- 静态属性表格 -->
             <el-table :data="onlyTableData" border>
               <!-- 扩展列 -->
               <el-table-column type="expand">
                 <template slot-scope="scope">
-                  <el-tag v-for="(item, i) in scope.row.attr_vals" :key="i"
-                  closable @close="handleClose(i,scope.row)">{{item}}</el-tag>
+                  <el-tag
+                    v-for="(item, i) in scope.row.attr_vals"
+                    :key="i"
+                    closable
+                    @close="handleClose(i, scope.row)"
+                    >{{ item }}</el-tag
+                  >
                   <el-input
                     class="input-new-tag"
                     v-if="scope.row.inputVisible"
@@ -86,15 +115,24 @@
                     ref="saveTagInput"
                     size="small"
                     @keyup.enter.native="handleInputConfirm(scope.row)"
-                    @blur="handleInputConfirm(scope.row)">
+                    @blur="handleInputConfirm(scope.row)"
+                  >
                   </el-input>
-                  <el-button v-else class="button-new-tag" size="small"
-                  @click="showInput(scope.row)">+ New Tag</el-button>
+                  <el-button
+                    v-else
+                    class="button-new-tag"
+                    size="small"
+                    @click="showInput(scope.row)"
+                    >+ New Tag</el-button
+                  >
                 </template>
               </el-table-column>
               <!-- 索引列 -->
               <el-table-column type="index"></el-table-column>
-              <el-table-column label="属性名称" prop="attr_name"></el-table-column>
+              <el-table-column
+                label="属性名称"
+                prop="attr_name"
+              ></el-table-column>
               <el-table-column label="操作">
                 <template slot-scope="scope">
                   <el-button
@@ -102,13 +140,15 @@
                     size="mini"
                     icon="el-icon-edit"
                     @click="showEditDialog(scope.row.attr_id)"
-                  >编辑</el-button>
+                    >编辑</el-button
+                  >
                   <el-button
                     type="danger"
                     size="mini"
                     icon="el-icon-delete"
                     @click="removeParams(scope.row.attr_id)"
-                  >删除</el-button>
+                    >删除</el-button
+                  >
                 </template>
               </el-table-column>
             </el-table>
@@ -119,12 +159,17 @@
 
     <!-- 添加参数对话框 -->
     <el-dialog
-      :title="'添加'+ titleText"
+      :title="'添加' + titleText"
       :visible.sync="addDialogVisible"
       width="50%"
       @close="addDialogVisibleClose"
     >
-      <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px">
+      <el-form
+        :model="addForm"
+        :rules="addFormRules"
+        ref="addFormRef"
+        label-width="100px"
+      >
         <el-form-item :label="titleText" prop="attr_name">
           <el-input v-model="addForm.attr_name"></el-input>
         </el-form-item>
@@ -137,12 +182,17 @@
 
     <!-- 修改参数对话框 -->
     <el-dialog
-      :title="'添加'+ titleText"
+      :title="'添加' + titleText"
       :visible.sync="editDialogVisible"
       width="50%"
       @close="eidtDialogVisibleClose"
     >
-      <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="100px">
+      <el-form
+        :model="editForm"
+        :rules="editFormRules"
+        ref="editFormRef"
+        label-width="100px"
+      >
         <el-form-item :label="titleText" prop="attr_name">
           <el-input v-model="editForm.attr_name"></el-input>
         </el-form-item>
@@ -156,6 +206,14 @@
 </template>
 
 <script>
+import {
+  categoriesListApi,
+  categoriesAttrListApi,
+  categoriesAttrAddApi,
+  categoriesAttrEditApi,
+  categoriesAttrDetailApi,
+  categoriesAttrDelApi
+} from '@/api/goods'
 export default {
   data () {
     return {
@@ -210,7 +268,7 @@ export default {
   methods: {
     // 获取所有商品的分类列表
     async getCateList () {
-      const { data: res } = await this.$http.get('categories')
+      const { data: res } = await categoriesListApi()
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }
@@ -236,13 +294,13 @@ export default {
       }
 
       // 请求参数列表
-      const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, { params: { sel: this.activeName } })
+      const { data: res } = await categoriesAttrListApi(this.cateId, { sel: this.activeName })
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }
 
       // 把res.data目录下的数组中的attr_vals字符串转化成字符串数组
-      res.data.forEach(item => {
+      res.data.forEach((item) => {
         // 字符串attr_vals中通过空格分隔
         item.attr_vals = item.attr_vals ? item.attr_vals.split(' ') : []
 
@@ -269,12 +327,13 @@ export default {
     // 点击按钮，添加参数
     addParams () {
       // 进行表单校验
-      this.$refs.addFormRef.validate(async valid => {
+      this.$refs.addFormRef.validate(async (valid) => {
         if (valid) {
-          const { data: res } = await this.$http.post(`categories/${this.cateId}/attributes`, {
-            attr_name: this.addForm.attr_name,
+          let params = {
+            ...this.addForm,
             attr_sel: this.activeName
-          })
+          }
+          const { data: res } = await categoriesAttrAddApi(this.cateId, params)
           if (res.meta.status !== 201) {
             return this.$message.error(res.meta.msg)
           }
@@ -288,9 +347,8 @@ export default {
     },
     // 显示修改参数对话框
     async showEditDialog (id) {
-      const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes/${id}`, {
-        params: { attr_sel: this.activeName }
-      })
+      console.log('id', id)
+      const { data: res } = await categoriesAttrDetailApi(this.cateId, id)
       console.log(res)
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
@@ -306,9 +364,13 @@ export default {
     },
     // 点击按钮，修改参数
     editParams () {
-      this.$refs.editFormRef.validate(async valid => {
+      this.$refs.editFormRef.validate(async (valid) => {
         if (valid) {
-          const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${this.editForm.attr_id}`, { attr_name: this.editForm.attr_name, attr_sel: this.activeName })
+          let params = {
+            ...this.editForm,
+            attr_sel: this.activeName
+          }
+          const { data: res } = await categoriesAttrEditApi(this.cateId, params)
           if (res.meta.status !== 200) {
             return this.$message.error(res.meta.msg)
           }
@@ -320,17 +382,20 @@ export default {
     },
     // 删除参数
     async removeParams (id) {
-      const confirm = await this.$confirm('此操作将永久删除该参数, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).catch(err => err)
-      console.log(confirm)
+      const confirm = await this.$confirm(
+        '此操作将永久删除该参数, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).catch((err) => err)
 
       if (confirm !== 'confirm') {
         return this.$message.info('已取消删除！')
       }
-      const { data: res } = await this.$http.delete(`categories/${this.cateId}/attributes/${id}`)
+      const { data: res } = await categoriesAttrDelApi(this.cateId, id)
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }
@@ -343,7 +408,7 @@ export default {
       row.inputVisible = true
       // $nextTick方法作用：当页面元素被重新渲染后，才会指定回调函数中的代码
       // 当inputVisible被重置为true后，需要重新渲染页面元素，所以需要在这个函数中获取文本对象，否则无效
-      this.$nextTick(_ => {
+      this.$nextTick((_) => {
         // 获取文本框dom对象，获取焦点
         this.$refs.saveTagInput.$refs.input.focus()
       })
@@ -365,11 +430,13 @@ export default {
     },
     // 保存attr_vals中的改变，保存到数据库中
     async saveAttrVals (row) {
-      const { data: res } = await this.$http.put(`categories/${this.cateId}/attributes/${row.attr_id}`, {
+      let params = {
+        attr_id: row.attr_id,
         attr_name: row.attr_name,
         attr_sel: row.attr_sel,
         attr_vals: row.attr_vals.join(' ')
-      })
+      }
+      const { data: res } = await categoriesAttrEditApi(this.cateId, params)
 
       if (res.meta.status !== 200) {
         this.$message.error(res.meta.msg)
@@ -416,11 +483,11 @@ export default {
 .el-tag {
   margin-left: 15px;
 }
-.input-new-tag{
+.input-new-tag {
   width: 100px;
   margin-left: 15px;
 }
-.button-new-tag{
+.button-new-tag {
   width: 100px;
   margin-left: 15px;
 }

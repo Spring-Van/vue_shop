@@ -3,7 +3,8 @@ const path = require('path')
 const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV) // 判断是否是生产环境
 const resolve = (dir) => path.join(__dirname, dir)
 module.exports = {
-  publicPath: process.env.NODE_ENV === 'production' ? '/production-sub-path/' : '/', // 公共路径
+  publicPath:
+    process.env.NODE_ENV === 'production' ? '/production-sub-path/' : '/', // 公共路径
   indexPath: 'index.html', // 相对于打包路径index.html的路径
   outputDir: process.env.outputDir || 'dist', // 输出文件目录 默认 dist
   assetsDir: 'static', // 相对于outputDir的静态资源(js、css、img、fonts)目录
@@ -12,10 +13,10 @@ module.exports = {
   productionSourceMap: !IS_PROD, // 生产环境的 source map
   parallel: require('os').cpus().length > 1, // 是否为 Babel 或 TypeScript 使用 thread-loader。该选项在系统的 CPU 有多于一个内核时自动启用，仅作用于生产构建。
   pwa: {}, // 向 PWA 插件传递选项。
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     config.resolve.symlinks(true) // 修复热更新失效
     // 如果使用多页面打包，使用vue inspect --plugins查看html是否在结果数组中
-    config.plugin('html').tap(args => {
+    config.plugin('html').tap((args) => {
       // 修复 Lazy loading routes Error
       args[0].chunksSortMode = 'none'
       return args
@@ -42,17 +43,19 @@ module.exports = {
     }
   },
   devServer: {
-    overlay: { // 让浏览器 overlay 同时显示警告和错误
+    overlay: {
+      // 让浏览器 overlay 同时显示警告和错误
       warnings: true,
       errors: true
     },
     host: 'localhost', // 自定义域名
-    port: 8080, // 端口号
+    port: 8888, // 端口号
     https: false, // https:{type:Boolean}
     open: false, // 配置自动启动浏览器
     hotOnly: true, // 热更新
     // proxy: 'http://localhost:8080'   // 配置跨域处理,只有一个代理 单个示例
-    proxy: { // 配置多个跨域 多个示例
+    proxy: {
+      // 配置多个跨域 多个示例
       '/api': {
         target: 'http://127.0.0.1:8888',
         changeOrigin: true,

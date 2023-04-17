@@ -44,42 +44,43 @@ export function categoriesDelApi (id) {
 }
 
 // 分类参数列表
-export function categoriesAttrListApi (id) {
+export function categoriesAttrListApi (id, params) {
   return request({
     url: `categories/${id}/attributes`,
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
 // 添加分类参数
-export function categoriesAttrAddApi (data) {
+export function categoriesAttrAddApi (id, data) {
   return request({
-    url: `categories/${data.id}/attributes`,
+    url: `categories/${id}/attributes`,
     method: 'post',
     data
   })
 }
 
 // 删除分类参数
-export function categoriesAttrDelApi (data) {
+export function categoriesAttrDelApi (id, attrId) {
   return request({
-    url: `categories/${data.id}/attributes/${data.attrid}`,
+    url: `categories/${id}/attributes/${attrId}`,
     method: 'delete'
   })
 }
 
 // 分类参数详情
-export function categoriesAttrDetailApi (data) {
+export function categoriesAttrDetailApi (cateid, attrId) {
   return request({
-    url: `categories/${data.id}/attributes/${data.attrid}`,
+    url: `categories/${cateid}/attributes/${attrId}`,
     method: 'get'
   })
 }
 
 // 编辑分类参数
-export function categoriesAttrEditApi (data) {
+export function categoriesAttrEditApi (cateid, data) {
   return request({
-    url: `categories/${data.id}/attributes/${data.attrid}`,
+    url: `categories/${cateid}/attributes/${data.attr_id}`,
     method: 'put',
     data
   })
