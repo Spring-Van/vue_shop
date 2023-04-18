@@ -87,10 +87,11 @@ export function categoriesAttrEditApi (cateid, data) {
 }
 
 // 商品列表
-export function goodsListApi () {
+export function goodsListApi (params) {
   return request({
     url: 'goods',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
@@ -114,7 +115,7 @@ export function goodsDetailApi (id) {
 // 编辑商品
 export function goodsEditApi (data) {
   return request({
-    url: `goods/${data.id}`,
+    url: `goods/${data.goods_id}`,
     method: 'put',
     data
   })

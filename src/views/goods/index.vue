@@ -4,8 +4,17 @@
     <el-card>
       <el-row :gutter="20">
         <el-col :span="8">
-          <el-input placeholder="请输入内容" v-model="queryInfo.query" clearable @clear="getGoodsList">
-            <el-button slot="append" icon="el-icon-search" @click="getGoodsList"></el-button>
+          <el-input
+            placeholder="请输入内容"
+            v-model="queryInfo.query"
+            clearable
+            @clear="getGoodsList"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              @click="getGoodsList"
+            ></el-button>
           </el-input>
         </el-col>
         <el-col :span="4">
@@ -15,15 +24,35 @@
       <el-table :data="goodlist" border stripe>
         <el-table-column type="index"></el-table-column>
         <el-table-column prop="goods_name" label="商品名称"></el-table-column>
-        <el-table-column prop="goods_price" label="商品价格(元)" width="95px"></el-table-column>
-        <el-table-column prop="goods_weight" label="商品重量" width="70px"></el-table-column>
+        <el-table-column
+          prop="goods_price"
+          label="商品价格(元)"
+          width="95px"
+        ></el-table-column>
+        <el-table-column
+          prop="goods_weight"
+          label="商品重量"
+          width="70px"
+        ></el-table-column>
         <el-table-column prop="add_time" label="创建时间" width="140px">
-          <template slot-scope="scope">{{scope.row.add_time | dateFormat}}</template>
+          <template slot-scope="scope">{{
+            addTime(scope.row.add_time)
+          }}</template>
         </el-table-column>
         <el-table-column label="操作" width="130px">
           <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-edit" size="mini" @click="editById(scope.row.goods_id)"></el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="removeById(scope.row.goods_id)"></el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              size="mini"
+              @click="editById(scope.row.goods_id)"
+            ></el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="removeById(scope.row.goods_id)"
+            ></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -35,14 +64,25 @@
         :page-sizes="[3, 5, 10, 15]"
         :page-size="queryInfo.pagesize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="this.total" background
+        :total="this.total"
+        background
       ></el-pagination>
     </el-card>
 
-     <!-- 修改商品 -->
-    <el-dialog title="编辑商品" :visible.sync="editDialogVisible" width="50%" @close="editDialogClosed">
+    <!-- 修改商品 -->
+    <el-dialog
+      title="编辑商品"
+      :visible.sync="editDialogVisible"
+      width="50%"
+      @close="editDialogClosed"
+    >
       <!-- 主体内容 -->
-      <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="100px">
+      <el-form
+        :model="editForm"
+        :rules="editFormRules"
+        ref="editFormRef"
+        label-width="100px"
+      >
         <el-form-item label="商品名称" prop="goods_name">
           <el-input v-model="editForm.goods_name"></el-input>
         </el-form-item>
@@ -65,6 +105,7 @@
 </template>
 
 <script>
+import { goodsListApi, goodsEditApi, goodsDetailApi, goodsDelApi } from '@/api/goods'
 export default {
   data () {
     return {
@@ -102,15 +143,20 @@ export default {
       }
     }
   },
+  computed: {
+    addTime () {
+      return (time) => {
+        return this.$dayjs(time).format('YYYY-MM-DD')
+      }
+    }
+  },
   created () {
     this.getGoodsList()
   },
   methods: {
     // 获取商品数据列表
     async getGoodsList () {
-      const { data: res } = await this.$http.get('goods', {
-        params: this.queryInfo
-      })
+      const { data: res } = await goodsListApi(this.queryInfo)
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }
@@ -130,7 +176,7 @@ export default {
     },
     // 编辑商品
     async editById (id) {
-      const { data: res } = await this.$http.get(`goods/${id}`)
+      const { data: res } = await goodsDetailApi(id)
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.status)
       }
@@ -139,15 +185,19 @@ export default {
     },
     // 根据ID删除商品
     async removeById (id) {
-      const confirmResult = await this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).catch(err => err)
+      const confirmResult = await this.$confirm(
+        '此操作将永久删除该商品, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).catch((err) => err)
       if (confirmResult !== 'confirm') {
         return this.$message.info('已取消删除')
       }
-      const { data: res } = await this.$http.delete(`goods/${id}`)
+      const { data: res } = await goodsDelApi(id)
       if (res.meta.status !== 200) {
         this.$message.error(res.meta.msg)
       }
@@ -163,11 +213,11 @@ export default {
     },
     // 编辑
     async eidtGoods () {
-      const { data: res } = await this.$http.put(`goods/${this.editForm.goods_id}`, this.editForm)
+      const { data: res } = await goodsEditApi(this.editForm)
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }
-      this.$message.success(res.meta.msg)
+      this.$message.success('修改成功')
       this.getGoodsList()
       this.editDialogVisible = false
     }
@@ -175,5 +225,4 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>
