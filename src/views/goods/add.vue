@@ -1,10 +1,21 @@
 <template>
   <div>
     <el-card>
-      <el-alert title="添加商品信息" type="info" center show-icon :closable="false"></el-alert>
+      <el-alert
+        title="添加商品信息"
+        type="info"
+        center
+        show-icon
+        :closable="false"
+      ></el-alert>
       <!-- 进度条 -->
       <!-- 字符串-0 会转化成数值 -->
-      <el-steps :space="200" :active="activeIndex - 0" finish-status="success" align-center>
+      <el-steps
+        :space="200"
+        :active="activeIndex - 0"
+        finish-status="success"
+        align-center
+      >
         <el-step title="基本信息"></el-step>
         <el-step title="商品参数"></el-step>
         <el-step title="商品属性"></el-step>
@@ -32,13 +43,25 @@
               <el-input v-model="addForm.goods_name"></el-input>
             </el-form-item>
             <el-form-item label="商品价格" prop="goods_price">
-              <el-input v-model="addForm.goods_price" type="number"></el-input>
+              <el-input-number
+                v-model="addForm.goods_price"
+                controls-position="right"
+                :min="0"
+              ></el-input-number>
             </el-form-item>
             <el-form-item label="商品重量" prop="goods_weight">
-              <el-input v-model="addForm.goods_weight" type="number"></el-input>
+              <el-input-number
+                v-model="addForm.goods_weight"
+                controls-position="right"
+                :min="0"
+              ></el-input-number>
             </el-form-item>
             <el-form-item label="商品数量" prop="goods_number">
-              <el-input v-model="addForm.goods_number" type="number"></el-input>
+              <el-input-number
+                v-model="addForm.goods_number"
+                controls-position="right"
+                :min="0"
+              ></el-input-number>
             </el-form-item>
             <el-form-item label="商品分类" prop="goods_cat">
               <el-cascader
@@ -50,14 +73,27 @@
             </el-form-item>
           </el-tab-pane>
           <el-tab-pane label="商品参数" name="1">
-            <el-form-item :label="item.attr_name" v-for="item in manyTableData" :key="item.attr_id">
+            <el-form-item
+              :label="item.attr_name"
+              v-for="item in manyTableData"
+              :key="item.attr_id"
+            >
               <el-checkbox-group v-model="item.attr_vals">
-                <el-checkbox :label="cb" v-for="(cb, i) in item.attr_vals" :key="i" border></el-checkbox>
+                <el-checkbox
+                  :label="cb"
+                  v-for="(cb, i) in item.attr_vals"
+                  :key="i"
+                  border
+                ></el-checkbox>
               </el-checkbox-group>
             </el-form-item>
           </el-tab-pane>
           <el-tab-pane label="商品属性" name="2">
-            <el-form-item :label="item.attr_name" v-for="item in onlyTableData" :key="item.attr_id">
+            <el-form-item
+              :label="item.attr_name"
+              v-for="item in onlyTableData"
+              :key="item.attr_id"
+            >
               <el-input v-model="item.attr_vals"></el-input>
             </el-form-item>
           </el-tab-pane>
@@ -65,6 +101,7 @@
             <!-- action：图片上传地址 -->
             <el-upload
               class="upload-demo"
+              accept=".jpg, .png, jpeg"
               :action="imgUploadURL"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
@@ -77,7 +114,9 @@
           </el-tab-pane>
           <el-tab-pane label="商品内容" name="4">
             <quill-editor v-model="addForm.goods_introduce"></quill-editor>
-            <el-button type="primary" class="addBtn" @click="add">添加商品</el-button>
+            <el-button type="primary" class="addBtn" @click="add"
+              >添加商品</el-button
+            >
           </el-tab-pane>
         </el-tabs>
       </el-form>
@@ -90,6 +129,7 @@
 </template>
 
 <script>
+import { categoriesListApi, categoriesAttrListApi, goodsAddApi } from '@/api/goods'
 import _ from 'lodash'
 export default {
   data () {
@@ -160,7 +200,8 @@ export default {
   methods: {
     // 获取商品分类列表
     async getCateList () {
-      const { data: res } = await this.$http.get('categories')
+      // const { data: res } = await this.$http.get('categories')
+      const { data: res } = await categoriesListApi()
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }
@@ -189,25 +230,19 @@ export default {
       console.log(this.activeIndex)
       // 请求分类对应的动态参数
       if (this.activeIndex === '1') {
-        const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, {
-          params: {
-            sel: 'many'
-          }
-        })
+        const { data: res } = await categoriesAttrListApi(this.cateId, { sel: 'many' })
         if (res.meta.status !== 200) {
           return this.$message.error(res.meta.msg)
         }
-        res.data.forEach(item => {
-          item.attr_vals = item.attr_vals.length !== 0 ? item.attr_vals.split(' ') : []
+        res.data.forEach((item) => {
+          item.attr_vals =
+            item.attr_vals.length !== 0 ? item.attr_vals.split(' ') : []
         })
         this.manyTableData = res.data
         console.log(res.data)
-      } else if (this.activeIndex === '2') { // 请求静态属性
-        const { data: res } = await this.$http.get(`categories/${this.cateId}/attributes`, {
-          params: {
-            sel: 'only'
-          }
-        })
+      } else if (this.activeIndex === '2') {
+        // 请求静态属性
+        const { data: res } = await categoriesAttrListApi(this.cateId, { sel: 'only' })
         if (res.meta.status !== 200) {
           return this.$message.error(res.meta.msg)
         }
@@ -225,9 +260,7 @@ export default {
       // 获取图片在服务器上的临时地址
       const uploadURL = file.response.data.tmp_path
       // 根据图片地址查找其在addForm的pics中的下标
-      const i = this.addForm.pics.findIndex(item =>
-        item.pic === uploadURL
-      )
+      const i = this.addForm.pics.findIndex((item) => item.pic === uploadURL)
       // 删除对应下标项
       this.addForm.pics.splice(i, 1)
       console.log(this.addForm)
@@ -245,7 +278,7 @@ export default {
     add () {
       console.log(this.addForm)
       // 添加商品前的表单预验证
-      this.$refs.addFormRef.validate(async valid => {
+      this.$refs.addFormRef.validate(async (valid) => {
         if (!valid) {
           return this.$message.error('请填写必要的表单预验证！')
         }
@@ -254,7 +287,7 @@ export default {
         const form = _.cloneDeep(this.addForm)
         form.goods_cat = form.goods_cat.join(',')
         // 处理动态参数
-        this.manyTableData.forEach(item => {
+        this.manyTableData.forEach((item) => {
           const newInfo = {
             attr_id: item.attr_id,
             attr_value: item.attr_vals.join(' ')
@@ -262,7 +295,7 @@ export default {
           this.addForm.attrs.push(newInfo)
         })
         // 处理静态属性
-        this.onlyTableData.forEach(item => {
+        this.onlyTableData.forEach((item) => {
           const newInfo = {
             attr_id: item.attr_id,
             attr_value: item.attr_vals
@@ -272,7 +305,7 @@ export default {
         form.attrs = this.addForm.attrs
 
         // 添加商品
-        const { data: res } = await this.$http.post('goods', form)
+        const { data: res } = await goodsAddApi(form)
         if (res.meta.status !== 201) {
           return this.$message.error(res.meta.msg)
         }
@@ -304,7 +337,10 @@ export default {
 .previewImg {
   width: 100%;
 }
-.addBtn{
+.addBtn {
   margin-top: 15px;
+}
+.el-input-number {
+  width: 100%;
 }
 </style>
