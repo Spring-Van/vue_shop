@@ -19,6 +19,7 @@ service.interceptors.request.use(config => {
   config.data = JSON.stringify(config.data) // 数据转化,也可以使用qs转换
   config.headers = {
     'Content-Type': 'application/json' // 配置请求头
+    // 'Content-Type': 'application/x-www-form-urlencoded' // 配置请求头
   }
   // 为请求头对象添加token验证的Authorization字段
   config.headers.Authorization = window.sessionStorage.getItem('token')
@@ -28,7 +29,7 @@ service.interceptors.request.use(config => {
   // config.params = {'token':token} //如果要求携带在参数中
   // config.headers.token= token; //如果要求携带在请求头中
   // }
-  console.log('token', config)
+  // console.log('token', config)
   return config
 }, error => {
   Promise.reject(error)

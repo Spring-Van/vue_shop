@@ -3,8 +3,17 @@
     <el-card>
       <el-row>
         <el-col :span="8">
-          <el-input placeholder="请输入内容"  v-model="queryInfo.query" clearable @clear="getOrderList">
-            <el-button slot="append" icon="el-icon-search" @click="getOrderList"></el-button>
+          <el-input
+            placeholder="请输入内容"
+            v-model="queryInfo.query"
+            clearable
+            @clear="getOrderList"
+          >
+            <el-button
+              slot="append"
+              icon="el-icon-search"
+              @click="getOrderList"
+            ></el-button>
           </el-input>
         </el-col>
       </el-row>
@@ -16,17 +25,31 @@
         <el-table-column label="订单价格" prop="order_price"></el-table-column>
         <el-table-column label="是否付款" prop="pay_status">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.pay_status === 1" type="success">已付款</el-tag>
+            <el-tag v-if="scope.row.pay_status === 1" type="success"
+              >已付款</el-tag
+            >
             <el-tag v-else type="danger">未付款</el-tag>
           </template>
         </el-table-column>
         <el-table-column label="是否发货" prop="is_send"></el-table-column>
         <el-table-column label="下单时间" prop="create_time">
-          <template slot-scope="scope">{{scope.row.create_time | dateFormat}}</template>
+          <template slot-scope="scope">{{
+            orderTime(scope.row.create_time)
+          }}</template>
         </el-table-column>
         <el-table-column label="操作">
-          <el-button type="primary" icon="el-icon-edit" size="mini" @click="editAddressVisible"></el-button>
-          <el-button type="warning" icon="el-icon-location" size="mini" @click="showProcess"></el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-edit"
+            size="mini"
+            @click="editAddressVisible"
+          ></el-button>
+          <el-button
+            type="warning"
+            icon="el-icon-location"
+            size="mini"
+            @click="showProcess"
+          ></el-button>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -41,7 +64,12 @@
       ></el-pagination>
     </el-card>
     <!-- 修改地址对话框 -->
-    <el-dialog title="修改地址" :visible.sync="addressVisible" width="50%" @close="addressVisibleClose">
+    <el-dialog
+      title="修改地址"
+      :visible.sync="addressVisible"
+      width="50%"
+      @close="addressVisibleClose"
+    >
       <el-form
         :model="addressForm"
         :rules="addressFormRules"
@@ -62,25 +90,28 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="addressVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addressVisible = false">确 定</el-button>
+        <el-button type="primary" @click="addressVisible = false"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 查看物流对话框 -->
     <!-- 修改地址对话框 -->
     <el-dialog title="查看物流" :visible.sync="processVisible" width="50%">
-      <!-- <el-timeline>
+      <el-timeline>
         <el-timeline-item
           v-for="(activity, index) in processList"
           :key="index"
           :timestamp="activity.time"
         >{{activity.context}}</el-timeline-item>
-      </el-timeline> -->
+      </el-timeline>
     </el-dialog>
   </div>
 </template>
 
 <script>
 import cityData from './config/citydata'
+import { ordersListApi, lookPhysicalApi } from '@/api/orders'
 export default {
   data () {
     return {
@@ -102,9 +133,7 @@ export default {
       },
       // 地址表单验证规则
       addressFormRules: {
-        city: [
-          { required: true, message: '请选择省市县', trigger: 'blur' }
-        ],
+        city: [{ required: true, message: '请选择省市县', trigger: 'blur' }],
         detailAdd: [
           { required: true, message: '请填写详细地址', trigger: 'blur' }
         ]
@@ -115,13 +144,21 @@ export default {
       processList: []
     }
   },
+  computed: {
+    orderTime () {
+      return (time) => {
+        return this.$dayjs(time).format('YYYY-MM-DD')
+      }
+    }
+  },
   created () {
     this.getOrderList()
   },
   methods: {
     // 订单列表
     async getOrderList () {
-      const { data: res } = await this.$http.get('orders', { params: this.queryInfo })
+      const { data: res } = await ordersListApi(this.queryInfo)
+      // await this.$http.get('orders', { params: this.queryInfo })
       if (res.meta.status !== 200) {
         return this.$message.error(res.meta.msg)
       }
@@ -154,9 +191,10 @@ export default {
     },
     // 显示物流
     async showProcess () {
-      const { data: res } = await this.$http.get('/kuaidi/1106975712662')
+      let id = 1106975712662
+      const res = await lookPhysicalApi(id)
       if (res.meta.status !== 200) {
-        return this.$message.error(res.meta.msg)
+        return this.$message.error(res.meta.message)
       }
       console.log(res)
       this.processList = res.data
@@ -167,8 +205,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-// @import '../../plugins/timeline/timeline.css';
-// @import '../../plugins/timeline-item/timeline-item.css';
+@import '../../plugins/timeline/timeline.css';
+@import '../../plugins/timeline-item/timeline-item.css';
 .el-cascader {
   width: 100%;
 }

@@ -40,9 +40,14 @@ import {
   Upload
 } from 'element-ui'
 
-// import TimeLine from './timeline/index.js'
+/*
+*  从elemnet-ui2.6（包括2.6版本的）以后的版本中，
+*  element-ui才开始有这个组件的，
+*  在之前的elemnet-ui版中，没有这个组件,需下载后手动引入
+*/
+import TimeLine from './timeline/index.js'
+import TimeLineItem from './timeline-item/index.js'
 
-// import TimeLineItem from './timeline-item/index.js'
 Vue.use(Button)
 Vue.use(Form)
 Vue.use(FormItem)
@@ -78,8 +83,8 @@ Vue.use(Step)
 Vue.use(CheckboxGroup)
 Vue.use(Checkbox)
 Vue.use(Upload)
-// Vue.use(TimeLine)
-// Vue.use(TimeLineItem)
+Vue.use(TimeLine)
+Vue.use(TimeLineItem)
 // 定义一个原型对象的属性$message 来接收导入的消息对象Message
 Vue.prototype.$message = Message
 
