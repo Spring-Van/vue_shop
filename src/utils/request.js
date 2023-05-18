@@ -3,6 +3,10 @@
 import axios from 'axios'
 // 使用element-ui Message做消息提醒
 import { Message } from 'element-ui'
+// 导入 nprogress 包对应的js和css 用于加载进度条
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
 // 1. 创建新的axios实例，
 const service = axios.create({
   // 公共接口--这里注意后面会讲
@@ -12,6 +16,7 @@ const service = axios.create({
 })
 // 2.请求拦截器
 service.interceptors.request.use(config => {
+  NProgress.start()
   if (config.method === 'get') {
     config.data = { unused: 0 } // 这个是关键点，加入这行就可以了,解决get,请求添加不上Content-Type
   }
@@ -37,8 +42,8 @@ service.interceptors.request.use(config => {
 
 // 3.响应拦截器
 service.interceptors.response.use(response => {
+  NProgress.done()
   // 接收到响应数据并成功后的一些共有的处理，关闭loading等
-
   return response
 }, error => {
   /** *** 接收到异常响应的处理开始 *****/

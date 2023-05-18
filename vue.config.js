@@ -4,7 +4,7 @@ const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV) // 判断�
 const resolve = (dir) => path.join(__dirname, dir)
 module.exports = {
   publicPath:
-    process.env.NODE_ENV === 'production' ? '/production-sub-path/' : '/', // 公共路径
+  process.env.NODE_ENV === 'production' ? '/production-sub-path/' : '/', // 公共路径
   indexPath: 'index.html', // 相对于打包路径index.html的路径
   outputDir: process.env.outputDir || 'dist', // 输出文件目录 默认 dist
   assetsDir: 'static', // 相对于outputDir的静态资源(js、css、img、fonts)目录
@@ -14,6 +14,25 @@ module.exports = {
   parallel: require('os').cpus().length > 1, // 是否为 Babel 或 TypeScript 使用 thread-loader。该选项在系统的 CPU 有多于一个内核时自动启用，仅作用于生产构建。
   pwa: {}, // 向 PWA 插件传递选项。
   chainWebpack: (config) => {
+    // 生产环境默认打包入口
+    config.when(process.env.NODE_ENV === 'production', config => {
+      // 1.增加一个入口 app 2.清理所有默认入口配置 3.增加一个配置文件
+      config.entry('app').clear().add('./src/main-prod.js')
+      config.set('externals', {
+        vue: 'vue',
+        'vue-router': 'VueRouter',
+        axios: 'axios',
+        lodash: '_',
+        echarts: 'echarts',
+        nprogress: 'Nprogress',
+        'vue-quill_editor': 'VueQuillEditor'
+      })
+    })
+    // 开发环境默认打包入口
+    config.when(process.env.NODE_ENV === 'development', config => {
+      // 1.增加一个入口 app 2.清理所有默认入口配置 3.增加一个配置文件
+      config.entry('app').clear().add('./src/main-dev.js')
+    })
     config.resolve.symlinks(true) // 修复热更新失效
     // 如果使用多页面打包，使用vue inspect --plugins查看html是否在结果数组中
     config.plugin('html').tap((args) => {
